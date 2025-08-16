@@ -1,6 +1,7 @@
 const express=require("express");
 const router=express.Router();
-const { updateUser,deleteUser,getUserById,changePassword,getUsers,requestResetPassword,resetPassword}=require("../controllers/user")
+const { updateUser,deleteUser,getUserById,changePassword,getUsers,requestResetPassword,resetPassword}=require("../controllers/user");
+const upload=require("../configration/uploadFile");
 router.get("/",getUsers)
 router.patch("/updateUser/:id",upload.single("image"),updateUser);
 router.delete("/:id",deleteUser);
