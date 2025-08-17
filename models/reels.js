@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const reelSchema = new mongoose.Schema({
     title:{type: String,required: true},
-    postId: { type: mongoose.Schema.Types.ObjectId, ref: "Post", required: true }, // مرجع للبست الأصلي
+    refType: { type: String, enum: ["Post", "Order"], required: true }, // نوع المرجع
+    refId: { type: mongoose.Schema.Types.ObjectId, required: true },  
     video: {
         type: String,
     },

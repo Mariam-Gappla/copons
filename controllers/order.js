@@ -3,7 +3,7 @@ const Post = require("../models/post");
 const User = require("../models/user");
 const orderSchema = require("../validition/order");
 const saveImage = require("../configration/saveImage");
-const Reel=require("../models/reels")
+const Reel = require("../models/reels")
 const addOrder = async (req, res, next) => {
     try {
         const files = req.files.images || [];
@@ -58,18 +58,20 @@ const addOrder = async (req, res, next) => {
             return saveImage(file, "images");
         })
         // احفظ في قاعدة البيانات
-        await Order.create({
+        const order = await Order.create({
             ...req.body,
             location,
             userId,
             images: imagesPath,
             video: videoPath[0]
         });
-         
+
         await Reel.create({
             title: req.body.title,
             images: imagesPath,
-            video: videoPath[0]
+            video: videoPath[0],
+            refType: "Order",
+            refId: order._id,
         })
         res.status(200).send({
             code: 200,
@@ -146,7 +148,7 @@ const allVideosAndImages = async (req, res, next) => {
             reels.push(media);
             return media
         });
-       
+
         res.status(200).send({
             code: 200,
             status: true,
@@ -257,10 +259,15 @@ const getTodayStats = async (req, res, next) => {
             : "100";
 
         return res.status(200).send({
-            todayOrders: todayOrdersCount,
+           status:true,
+           code:200,
+           message:"تم استرجاع الطلب بنجاح",
+           data:{
+             todayOrders: todayOrdersCount,
             todayUsers: todayUsersCount,
             ordersGrowth: `${ordersGrowth}%`,
             usersGrowth: `${usersGrowth}%`
+           }
         });
 
     } catch (err) {

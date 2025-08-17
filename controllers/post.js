@@ -62,7 +62,7 @@ const addPost = async (req, res, next) => {
       { returnDocument: "after", upsert: true }
     );
     // احفظ في قاعدة البيانات
-    await Post.create({
+    const post=await Post.create({
       ...req.body,
       location,
       userId,
@@ -73,7 +73,9 @@ const addPost = async (req, res, next) => {
     await Reel.create({
       title:req.body.title,
       images: imagesPath,
-      video: videoPath[0]
+      video: videoPath[0],
+      refType: "Post",
+      refId: post._id,
     })
     res.status(200).send({
       code: 200,
@@ -286,10 +288,17 @@ const getPostsAndUsers = async (req, res, next) => {
       : "100";
 
     return res.status(200).send({
-      todayPosts: todayPostsCount,
-      todayUsers: todayUsersCount,
-      postsGrowth: `${postsGrowth}%`,
-      usersGrowth: `${usersGrowth}%`
+      code:200,
+      status:true,
+      message: "تم استرجاع الإحصائيات بنجاح",
+      data: {
+        todayPosts: todayPostsCount,
+        yesterdayPosts: yesterdayPostsCount,
+        todayUsers: todayUsersCount,
+        yesterdayUsers: yesterdayUsersCount,
+        postsGrowth: `${postsGrowth}%`,
+        usersGrowth: `${usersGrowth}%`
+      }
     });
 
   } catch (err) {
@@ -316,7 +325,7 @@ const getPostsStatistics = async (req, res, next) => {
     const statsWithPercentage = stats.map(item => ({
       category: item._id,
       count: item.count,
-      percentage: totalOrders > 0 ? ((item.count / totalOrders) * 100).toFixed(2) : 0
+      percentage: totalPosts > 0 ? ((item.count / totalPosts) * 100).toFixed(2) : 0
     }));
 
     return res.status(200).send({

@@ -28,10 +28,9 @@ const addCategory = async (req, res, next) => {
                 message: error.details[0].message
             });
         }
-
         const category = await Category.create({
             name: req.body.name,
-            mainCategoryId:req.params.mainCategory
+            mainCategoryId:req.params.id
         });
 
         return res.status(200).json({
@@ -111,7 +110,7 @@ const deleteCategory = async (req, res, next) => {
 const getCategoriesInMainCategory = async (req, res, next) => {
     try {
         const id=req.params.id;
-        const categories= await Categories.find({mainCategoryId:id});
+        const categories= await Category.find({mainCategoryId:id});
         return res.status(200).send({
             status:true,
             code:200,

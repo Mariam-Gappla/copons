@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
-require("dotenv").config();
+const dotenv = require("dotenv");
+dotenv.config();
 const connectDB = require("./configration/dbConfig");
 const otpRoutes = require("./routes/otp");
 const jwt = require("jsonwebtoken");
@@ -12,6 +13,7 @@ const orderRoutes = require("./routes/order");
 const favoriteRoutes = require("./routes/favorite");
 const commentRoutes = require("./routes/comment");
 const replyComment = require("./routes/replyComment");
+const mainCategoryRoutes=require("./routes/MainCategory");
 const userRoutes=require("./routes/user");
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
@@ -48,6 +50,7 @@ app.use("/favorite", favoriteRoutes);
 app.use("/comment", commentRoutes);
 app.use("/reply", replyComment);
 app.use("/user",userRoutes);
+app.use("/mainCategories", mainCategoryRoutes);
 
 app.use((err, req, res, next) => {
     res.status(400).send({

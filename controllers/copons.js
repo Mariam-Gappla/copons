@@ -1,6 +1,7 @@
 const copons = require("../models/copons")
 const couponSchema = require("../validition/coponsValidition");
 const saveImage = require("../configration/saveImage");
+const User = require("../models/user");
 const { message } = require("../validition/comment");
 const updateCouponStatus = async () => {
   const today = new Date();
@@ -40,7 +41,9 @@ const addCopon = async (req, res, next) => {
       status: true,
       code: 200,
       message: "تم اضافه الكوبون بنجاح",
-      copon
+     data:{
+       copon
+     }
     });
 
   }
@@ -96,11 +99,14 @@ const getCoponByUserId = async (req, res, next) => {
     return res.status(200).json({
       status: true,
       code: 200,
-      data: copon,
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
+      data: {
+        copon,
+        pagination: {
+          page,
+          totalPages: Math.ceil(total / limit)
+        }
+      }
+      
     });
 
   } catch (error) {
@@ -110,7 +116,7 @@ const getCoponByUserId = async (req, res, next) => {
 const getCoponById = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const copon = copons.findById(id);
+    const copon = await copons.findById(id);
     if (!copon) {
       return res.status(400).send({
         status: false,

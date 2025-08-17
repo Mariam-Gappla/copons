@@ -10,17 +10,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true
   },
-  image:{
-    type:String,
+  image: {
+    type: String,
   },
   password: {
     type: String,
     minlength: 6
   },
-  status:{
-    type:String,
-    enum:['trusted','untrusted'],
-    default:"untrusted"
+  status: {
+    type: String,
+    enum: ['trusted', 'untrusted'],
+    default: "untrusted"
   },
   resetOtp: {
     type: Number
@@ -28,7 +28,8 @@ const userSchema = new mongoose.Schema({
   resetOtpExpires: {
     type: Date
   },
-});
+}, { timestamps: true }
+);
 
 const user = mongoose.model('User', userSchema);
-module.exports= user;
+module.exports = user;
