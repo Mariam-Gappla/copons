@@ -29,7 +29,7 @@ const registerSchema = (lang = "en") => {
     }),
   });
 }
-const loginSchema = (lang = "en") => {
+const loginSchema = (lang = "ar") => {
   const messages = getMessages(lang);
   return joi.object({
    identifier: joi.string().pattern(/^\d{10,15}$/).required().messages({

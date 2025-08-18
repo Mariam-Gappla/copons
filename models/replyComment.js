@@ -2,16 +2,6 @@ const mongoose = require("mongoose");
 
 const replyCommentSchema = new mongoose.Schema(
   {
-    targetId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      refPath: "targetType"  // 👈 هنا بيحدد المرجع حسب القيمة
-    },
-    targetType: {
-      type: String,
-      required: true,
-      enum: ["Order", "Post"], // 👈 ممكن يكون Order أو Post
-    },
     commentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comment",

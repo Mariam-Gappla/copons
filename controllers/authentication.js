@@ -49,6 +49,7 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const lang = req.headers["accept-language"] || "en";
+    console.log(req.body)
     const { error } = loginSchema(lang).validate(req.body);
     const { identifier, password } = req.body;
     const messages = getMessages(lang);

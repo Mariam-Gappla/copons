@@ -8,7 +8,6 @@ const addCommentForOrder = async (req, res, next) => {
             userId: userId,
             targetId: orderId,
             text: text,
-            targetType: "Order" // 👈 تحديد نوع الهدف كـ Order
         });
         if (error) {
             return res.status(400).json({
@@ -54,7 +53,6 @@ const addCommentForPost = async (req, res, next) => {
             userId: userId,
             targetId: postId,
             text: text,
-            targetType: "Post" // 👈 تحديد نوع الهدف كـ Post
         });
         if (error) {
             return res.status(400).json({

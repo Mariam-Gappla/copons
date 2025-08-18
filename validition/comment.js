@@ -1,10 +1,10 @@
 const Joi = require("joi");
 
 const commentSchema = Joi.object({
-  orderId: Joi.string().required().messages({
-    "any.required":"رقم الطلب مطلوب",
-    "string.base": "رقم الطلب يجب ان يكون نصا"
-  }),
+    targetId: Joi.string().required().messages({
+      "any.required":"رقم الطلب او الاعلان مطلوب",
+      "string.base": "رقم الطلب او الاعلان يجب أن يكون نصًا"
+    }),
   userId: Joi.string().required().messages({
     "any.required": "رقم المستخدم مطلوب.",
     "string.base": "رقم المستخدم يجب أن يكون نصًا"
