@@ -49,13 +49,13 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const lang = req.headers["accept-language"] || "en";
-    console.log(req.body)
     const { error } = loginSchema(lang).validate(req.body);
     const { identifier, password } = req.body;
     const messages = getMessages(lang);
+    
     if (error) {
       return res.status(400).send({
-        status: true,
+        status: false,
         code: 400,
         message: error.details[0].message
       });
@@ -67,19 +67,20 @@ const login = async (req, res, next) => {
     } else {
       user = await User.findOne({ phone: identifier });
     }
+    console.log(messages.login.error);
     if (!user) {
       return res.status(400).send({
-        status: true,
+        status: false,
         code: 400,
         message: messages.login.error
       });
     }
 
-
+console.log(messages.login.invalid)
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword)
       return res.status(400).send({
-        status: true,
+        status: false,
         code: 400,
         message: messages.login.invalid
       });
