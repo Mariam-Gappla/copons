@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
+const cors = require("cors");
 dotenv.config();
 const connectDB = require("./configration/dbConfig");
 const otpRoutes = require("./routes/otp");
@@ -15,7 +16,9 @@ const commentRoutes = require("./routes/comment");
 const replyComment = require("./routes/replyComment");
 const mainCategoryRoutes=require("./routes/MainCategory");
 const userRoutes=require("./routes/user");
+const reelsRoutes = require("./routes/reels");
 const PORT = process.env.PORT || 5000;
+app.use(cors());
 app.use(express.json());
 app.use("/images", express.static("./images"))
 const authenticateToken = (req, res, next) => {
@@ -51,7 +54,7 @@ app.use("/comment", commentRoutes);
 app.use("/reply", replyComment);
 app.use("/user",userRoutes);
 app.use("/mainCategories", mainCategoryRoutes);
-
+app.use("/reels", reelsRoutes);
 app.use((err, req, res, next) => {
     res.status(400).send({
         status: false,
