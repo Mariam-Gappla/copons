@@ -18,7 +18,7 @@ const mainCategoryRoutes=require("./routes/MainCategory");
 const userRoutes=require("./routes/user");
 const reelsRoutes = require("./routes/reels");
 const PORT = process.env.PORT || 5000;
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use("/images", express.static("./images"))
 const authenticateToken = (req, res, next) => {
