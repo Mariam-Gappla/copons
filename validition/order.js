@@ -8,7 +8,7 @@ const orderSchema = Joi.object({
     'array.min': 'يجب رفع صورة واحدة على الأقل',
     'any.required': 'الصور مطلوبة'
   }),
-  video:Joi.string().uri().messages({
+  video: Joi.string().uri().messages({
     'string.uri': 'الفيديو يجب أن تكون رابطًا صالحًا'
   }),
   mainCategory: Joi.string().required().messages({
@@ -21,18 +21,9 @@ const orderSchema = Joi.object({
     'any.required': 'القسم الفرعي مطلوب'
   }),
 
-  location: Joi.object({
-    lat: Joi.number().required().messages({
-      'number.base': 'خط العرض يجب أن يكون رقمًا',
-      'any.required': 'خط العرض مطلوب'
-    }),
-    long: Joi.number().required().messages({
-      'number.base': 'خط الطول يجب أن يكون رقمًا',
-      'any.required': 'خط الطول مطلوب'
-    })
-  }).required().messages({
-    'object.base': 'الموقع يجب أن يكون كائن lat و long',
-    'any.required': 'الموقع مطلوب'
+  location: Joi.string().required().messages({
+    'string.base': 'الموقع يجب أن يكون نصًا',
+    'any.required': 'الموقع مطلوب',
   }),
 
   title: Joi.string().required().messages({
@@ -63,4 +54,4 @@ const orderSchema = Joi.object({
       'any.unknown': 'لا يمكن إرسال وسيلة تواصل عند اختيار محادثة داخل التطبيق'
     })
 });
-module.exports=orderSchema;
+module.exports = orderSchema;

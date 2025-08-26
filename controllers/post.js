@@ -11,9 +11,6 @@ const addPost = async (req, res, next) => {
     const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
     const imageFiles = files.filter(file => file.mimetype.startsWith('image/'));
     const videoFiles = files.filter(file => file.mimetype.startsWith('video/'));
-    const lat = parseFloat(req.body['location.lat']);
-    const long = parseFloat(req.body['location.long']);
-    const location = { lat, long };
     console.log(req.body)
     if (imageFiles.length > 4) {
       return res.status(400).send({
@@ -37,11 +34,8 @@ const addPost = async (req, res, next) => {
       return BASE_URL + `/${Date.now()}-${encodeURIComponent(file.originalname)}`;
     })
     console.log(imagesPath)
-    delete req.body['location.lat'];
-    delete req.body['location.long'];
     const { error } = postSchema.validate({
       ...req.body,
-      location,
       images: imagesPath,
       video: videoPath[0]
     });
@@ -64,7 +58,6 @@ const addPost = async (req, res, next) => {
     // احفظ في قاعدة البيانات
     const post=await Post.create({
       ...req.body,
-      location,
       userId,
       postNumber: count.seq,
       images: imagesPath,

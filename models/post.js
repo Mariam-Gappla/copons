@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { type } = require('../validition/comment');
+const { required } = require('joi');
 const postSchema = new mongoose.Schema({
   images: {
     type: [String],
@@ -26,14 +27,8 @@ const postSchema = new mongoose.Schema({
     type: String,
   },
   location: {
-    lat: {
-      type: Number,
-      required: true
-    },
-    long: {
-      type: Number,
-      required: true
-    }
+    type: String,
+    required:true
   },
   title: {
     type: String,

@@ -21,18 +21,9 @@ const postSchema = Joi.object({
     'any.required': 'القسم الفرعي مطلوب'
   }),
 
-  location: Joi.object({
-    lat: Joi.number().required().messages({
-      'number.base': 'خط العرض يجب أن يكون رقمًا',
-      'any.required': 'خط العرض مطلوب'
-    }),
-    long: Joi.number().required().messages({
-      'number.base': 'خط الطول يجب أن يكون رقمًا',
-      'any.required': 'خط الطول مطلوب'
-    })
-  }).required().messages({
-    'object.base': 'الموقع يجب أن يكون كائن lat و long',
-    'any.required': 'الموقع مطلوب'
+  location: Joi.string().required().messages({
+    'string.base': 'الموقع يجب أن يكون نصًا',
+    'any.required': 'الموقع مطلوب',
   }),
 
   title: Joi.string().required().messages({

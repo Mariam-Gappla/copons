@@ -21,14 +21,8 @@ const orderSchema = new mongoose.Schema({
     type: String,
   },
   location: {
-    lat: {
-      type: Number,
-      required: true
-    },
-    long: {
-      type: Number,
-      required: true
-    }
+    type: String,
+    required:true
   },
   title: {
     type: String,

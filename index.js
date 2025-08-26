@@ -16,13 +16,18 @@ const commentRoutes = require("./routes/comment");
 const replyComment = require("./routes/replyComment");
 const mainCategoryRoutes=require("./routes/MainCategory");
 const userRoutes=require("./routes/user");
-const reelsRoutes = require("./routes/reels");
+const reelsRoutes = require("./routes/reels.js");
 const PORT = process.env.PORT || 5000;
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use("/images", express.static("./images"))
 const authenticateToken = (req, res, next) => {
-    if (req.originalUrl.includes('login') || req.originalUrl.includes('verify-otp') || req.originalUrl.includes('send-otp') || req.originalUrl.includes('images')) {
+    if (req.originalUrl.includes('login') || 
+    req.originalUrl.includes('verify-otp') || 
+    req.originalUrl.includes('send-otp') || 
+    req.originalUrl.includes('images') || 
+    req.originalUrl.includes('requestResetPassword') || 
+    req.originalUrl.includes('resetPassword')) {
         console.log('Public route, skipping token check.');
         next();
     }

@@ -12,7 +12,7 @@ const registerSchema = (lang = "en") => {
     email: joi.string().email().messages({
       'string.email': messages.register.email.invalid
     }),
-    phone:joi.string().min(3).required().messages({
+    phone: joi.string().min(3).required().messages({
       'string.empty': messages.register.phone.required,
       'any.required': messages.register.phone.required,
     }),
@@ -32,10 +32,16 @@ const registerSchema = (lang = "en") => {
 const loginSchema = (lang = "ar") => {
   const messages = getMessages(lang);
   return joi.object({
-   identifier: joi.string().pattern(/^\d{10,15}$/).required().messages({
-      'string.empty': messages.login.phone.required, 
-      'string.pattern.base': messages.login.phone.invalid, 
-      'any.required': messages.login.phone.required 
+    identifier: joi.alternatives().try(
+      joi.string().pattern(/^\d{10,15}$/).messages({
+        'string.pattern.base': messages.login.phone.invalid
+      }),
+      joi.string().email().messages({
+        'string.email': messages.login.phone.invalid
+      })
+    ).required().messages({
+      'any.required': messages.login.phone.required,
+      'string.empty': messages.login.phone.required
     }),
     password: joi.string().min(3).max(30).required().messages({
       'string.empty': messages.login.password.required,

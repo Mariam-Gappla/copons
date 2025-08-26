@@ -8,7 +8,9 @@ const mongoose = require("mongoose");
 const register = async (req, res, next) => {
   try {
     const lang = req.headers["accept-language"] || "en";
+    const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
     const { error } = registerSchema(lang).validate(req.body);
+
     const messages = getMessages(lang);
     if (error) {
       return res.status(400).send({
@@ -29,10 +31,17 @@ const register = async (req, res, next) => {
       });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
+    let imagePath="";
+     if(req.file)
+     {
+       imagePath= saveImage(req.file,"images");
+     }
+   
     const newUser = await User.create({
       username,
       email,
       phone,
+      image:BASE_URL + imagePath,
       password: hashedPassword
     });
     res.status(200).send({
