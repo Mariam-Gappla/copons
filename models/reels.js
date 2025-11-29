@@ -1,8 +1,12 @@
 const mongoose = require('mongoose');
 const reelSchema = new mongoose.Schema({
-    title:{type: String,required: true},
+    title: { type: String, required: true },
     refType: { type: String, enum: ["Post", "Order"], required: true }, // نوع المرجع
-    refId: { type: mongoose.Schema.Types.ObjectId, required: true },  
+    refId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        path: 'refType'
+    },
     video: {
         type: String,
     },
@@ -10,8 +14,21 @@ const reelSchema = new mongoose.Schema({
         type: [String],
         required: true
     },
-    views: { type: Number, default: 0 }, // عدد المشاهدات
-    likes: { type: Number, default: 0 }, // عدد الإعجابات
+    views: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: []
+        }
+    ],
+    likes: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: []
+        }
+    ],
+
     commentsCount: { type: Number, default: 0 }, // عدد التعليقات
     createdAt: { type: Date, default: Date.now }
 });

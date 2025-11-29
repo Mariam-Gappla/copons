@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const { type } = require("../validition/post");
-
 const categorySchema = new mongoose.Schema(
   {
     name: {

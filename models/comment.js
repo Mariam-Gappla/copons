@@ -5,12 +5,12 @@ const commentSchema = new mongoose.Schema(
     targetId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      refPath: "targetType"  // 👈 هنا بيحدد المرجع حسب القيمة
+      refPath: "targetType"
     },
     targetType: {
       type: String,
       required: true,
-      enum: ["Order", "Post"], // 👈 ممكن يكون Order أو Post
+      enum: ["Order", "Post", "Reels"], // لو هتزودي Reel
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -25,5 +25,7 @@ const commentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// ✅ إضافة Index مركب
+commentSchema.index({ targetId: 1, targetType: 1 });
 
 module.exports = mongoose.model("Comment", commentSchema);

@@ -4,6 +4,8 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 dotenv.config();
 const connectDB = require("./configration/dbConfig");
+const http = require("http");
+const socketIO = require("socket.io");
 const otpRoutes = require("./routes/otp");
 const jwt = require("jsonwebtoken");
 const authenticationRoutes = require("./routes/authentication");
@@ -17,7 +19,17 @@ const replyComment = require("./routes/replyComment");
 const mainCategoryRoutes=require("./routes/MainCategory");
 const userRoutes=require("./routes/user");
 const reelsRoutes = require("./routes/reels.js");
+const messageRoutes=require("./routes/message.js");
 const PORT = process.env.PORT || 5000;
+const socket = require("./configration/socket.js");
+// HTTP + Socket Server
+const server = http.createServer(app);
+const io = socketIO(server, {
+    cors: { origin: "*" } // لو هتجرب من frontend مختلف
+});
+
+// Init socket
+socket.init(io);
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use("/images", express.static("./images"))
@@ -60,6 +72,7 @@ app.use("/reply", replyComment);
 app.use("/user",userRoutes);
 app.use("/mainCategories", mainCategoryRoutes);
 app.use("/reels", reelsRoutes);
+app.use("/messages", messageRoutes);
 app.use((err, req, res, next) => {
     res.status(400).send({
         status: false,

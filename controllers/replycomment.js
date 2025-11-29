@@ -8,7 +8,6 @@ const addReplyToOrder = async (req, res, next) => {
         const { error } = replyCommentSchema.validate({
             userId: userId,
             commentId: commentId,
-            targetId: orderId,
             text: text,
         });
         if (error) {
@@ -48,7 +47,6 @@ const addReplyToOrder = async (req, res, next) => {
             status: true,
             code: 200,
             message: "تم الرد على التعليق بنجاح",
-            data: formatData
         })
     }
     catch (error) {
@@ -62,7 +60,6 @@ const addReplyToPost = async (req, res, next) => {
         const { error } = replyCommentSchema.validate({
             userId: userId,
             commentId: commentId,
-            targetId: postId,
             text: text,
         });
         if (error) {
@@ -72,29 +69,50 @@ const addReplyToPost = async (req, res, next) => {
                 message: error.details[0].message
             });
         }
-        const comment = await replyComment.create({
+       await replyComment.create({
             userId: userId,
             commentId: commentId,
             targetId: postId,
             targetType: "Post",
             text: text,
         });
-        const data = await comment.populate("userId")
-        const formatData =
-        {
-            _id: data._id,
-            text: data.text,
-            userData: {
-                userId: data.userId._id,
-                username: data.userId.username,
-                phone: data.userId.phone
-            }
+        res.status(200).send({
+            status: true,
+            code: 200,
+            message: "تم الرد على التعليق بنجاح"
+        })
+    }
+    catch (error) {
+        next(error)
+    }
+}
+const addReplyToReel=async (req,res,next)=>{
+     try {
+        const userId = req.user.userId;
+        const { commentId, reelId, text } = req.body;
+        const { error } = replyCommentSchema.validate({
+            userId: userId,
+            commentId: commentId,
+            text: text,
+        });
+        if (error) {
+            return res.status(400).json({
+                status: false,
+                code: 400,
+                message: error.details[0].message
+            });
         }
+        await replyComment.create({
+            userId: userId,
+            commentId: commentId,
+            targetId: reelId,
+            targetType: "Reels",
+            text: text,
+        });
         res.status(200).send({
             status: true,
             code: 200,
             message: "تم الرد على التعليق بنجاح",
-            data: formatData
         })
     }
     catch (error) {
@@ -135,5 +153,6 @@ const getReplyByCommentId = async (req, res, next) => {
 module.exports = {
     addReplyToOrder,
     addReplyToPost,
-    getReplyByCommentId
+    getReplyByCommentId,
+    addReplyToReel
 }

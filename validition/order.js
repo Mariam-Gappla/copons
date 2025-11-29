@@ -35,23 +35,27 @@ const orderSchema = Joi.object({
     'string.base': 'الوصف يجب أن يكون نصًا',
     'any.required': 'الوصف مطلوب'
   }),
-
-  contactType: Joi.string().valid('واتساب', 'اتصال', 'محادثة داخل التطبيق').required().messages({
-    'string.base': 'نوع التواصل يجب أن يكون نصًا',
-    'any.only': 'نوع التواصل يجب أن يكون إما واتساب أو اتصال أو محادثة داخل التطبيق',
-    'any.required': 'نوع التواصل مطلوب'
+  contactType: Joi.string()
+  .valid("واتساب", "اتصال", "محادثة داخل التطبيق")
+  .required()
+  .messages({
+    "string.base": "نوع وسيلة التواصل يجب أن يكون نصًا.",
+    "any.only": "نوع وسيلة التواصل غير صالح. القيم المسموح بها هي: واتساب، اتصال، محادثة داخل التطبيق.",
+    "any.required": "نوع وسيلة التواصل مطلوب.",
   }),
 
-  contactValue: Joi.string()
-    .when('contactType', {
-      is: Joi.valid('واتساب', 'اتصال'),
-      then: Joi.required(),
-      otherwise: Joi.forbidden()
-    })
-    .messages({
-      'string.base': 'وسيلة التواصل يجب أن تكون نصًا',
-      'any.required': 'وسيلة التواصل مطلوبة عند اختيار واتساب أو اتصال',
-      'any.unknown': 'لا يمكن إرسال وسيلة تواصل عند اختيار محادثة داخل التطبيق'
-    })
+contactValue: Joi.string()
+  .when("contactType", {
+    is: Joi.valid("واتساب", "اتصال"),
+    then: Joi.required(),
+    otherwise: Joi.forbidden(),
+  })
+  .messages({
+    "string.base": "قيمة وسيلة التواصل يجب أن تكون نصًا.",
+    "any.required": "قيمة وسيلة التواصل مطلوبة عند اختيار واتساب أو اتصال.",
+    "any.unknown": "لا يُسمح بوجود هذا الحقل عندما تكون وسيلة التواصل محادثة داخل التطبيق.",
+  }),
+
+
 });
 module.exports = orderSchema;
