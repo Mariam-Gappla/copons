@@ -9,9 +9,13 @@ const addPost = async (req, res, next) => {
     const files = req.files.images || [];
     const userId = req.user.userId;
     const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+
     const imageFiles = files.filter(file => file.mimetype.startsWith('image/'));
     const videoFiles = files.filter(file => file.mimetype.startsWith('video/'));
-    console.log(req.body)
+
+    console.log(req.body);
+
+    // التحقق من عدد الصور والفيديوهات
     if (imageFiles.length > 4) {
       return res.status(400).send({
         code: 400,
@@ -27,17 +31,20 @@ const addPost = async (req, res, next) => {
         message: 'يجب رفع فيديو واحد فقط'
       });
     }
-    const imagesPath = imageFiles.map((file) => {
-      return BASE_URL + `/${Date.now()}-${encodeURIComponent(file.originalname)}`;
-    })
-    const videoPath = videoFiles.map((file) => {
-      return BASE_URL + `/${Date.now()}-${encodeURIComponent(file.originalname)}`;
-    })
-    console.log(imagesPath)
+
+    // حفظ الصور والفيديوهات على السيرفر باستخدام saveImage
+    const savedImages = imageFiles.map(file => saveImage(file));
+    const savedVideo = videoFiles.length ? saveImage(videoFiles[0]) : '';
+
+    // عمل روابط كاملة للمتصفح
+    const imagesPath = savedImages.map(img => `${BASE_URL}/${img}`);
+    const videoPath = savedVideo ? `${BASE_URL}/${savedVideo}` : '';
+
+    // التحقق من صحة البيانات باستخدام postSchema
     const { error } = postSchema.validate({
       ...req.body,
       images: imagesPath,
-      video: videoPath[0]
+      video: videoPath
     });
 
     if (error) {
@@ -47,29 +54,32 @@ const addPost = async (req, res, next) => {
         message: error.details[0].message
       });
     }
-    const images = files.map((file) => {
-      return saveImage(file, "images");
-    })
+
+    // تحديث العدّاد
     const count = await Counter.findOneAndUpdate(
       { name: "post" },
       { $inc: { seq: 1 } },
       { returnDocument: "after", upsert: true }
     );
-    // احفظ في قاعدة البيانات
-    const post=await Post.create({
+
+    // حفظ البوست في قاعدة البيانات
+    const post = await Post.create({
       ...req.body,
       userId,
       postNumber: count.seq,
       images: imagesPath,
-      video: videoPath[0]
+      video: videoPath
     });
+
+    // حفظ الريل المرتبط بالبوست
     await Reel.create({
-      title:req.body.title,
+      title: req.body.title,
       images: imagesPath,
-      video: videoPath[0],
+      video: videoPath,
       refType: "Post",
-      refId: post._id,
-    })
+      refId: post._id
+    });
+
     res.status(200).send({
       code: 200,
       status: true,
@@ -79,6 +89,7 @@ const addPost = async (req, res, next) => {
     next(error);
   }
 };
+
 const allPosts = async (req, res, next) => {
   try {
     const category = req.query.category;

@@ -25,7 +25,7 @@ const addCopon = async (req, res, next) => {
         message: error.details[0].message
       });
     }
-    const imagePath = saveImage(req.file, "images");
+    const imagePath = saveImage(req.file);
 
     // Step 4: أنشئ الكوبون في الداتا
     const copon = await copons.create({

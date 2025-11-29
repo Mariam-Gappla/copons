@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const { type } = require('../validition/comment');
-const { required } = require('joi');
 const postSchema = new mongoose.Schema({
   images: {
     type: [String],

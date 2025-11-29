@@ -49,7 +49,7 @@ const addOrder = async (req, res, next) => {
             });
         }
         const images = files.map((file) => {
-            return saveImage(file, "images");
+            return saveImage(file);
         })
         // احفظ في قاعدة البيانات
         const order = await Order.create({
