@@ -10,14 +10,23 @@ const updateCouponStatus = async () => {
 };
 const addCopon = async (req, res, next) => {
   try {
-    const image = req.file.originalname;
+    if (!req.file) {
+      return res.status(400).send({
+        code: 400,
+        status: false,
+        message: "يجب رفع صورة للكوبون"
+      });
+    }
+
     const userId = req.user.userId;
     const lang = req.headers['accept-language'] || 'ar';
     const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+
     const { error } = couponSchema(lang).validate({
-      image,
+      image: req.file.originalname,
       ...req.body
     });
+
     if (error) {
       return res.status(400).send({
         code: 400,
@@ -25,32 +34,36 @@ const addCopon = async (req, res, next) => {
         message: error.details[0].message
       });
     }
+
+    // حفظ الصورة على السيرفر
     const imagePath = saveImage(req.file);
 
-    // Step 4: أنشئ الكوبون في الداتا
+    // الرابط الكامل للمتصفح
+    const imageURL = `${BASE_URL}/${imagePath}`;
+
+    // حفظ الكوبون في الداتابيز
     const copon = await copons.create({
-      userId: userId,
-      image: BASE_URL + imagePath,
+      userId,
+      image: imageURL,
       code: req.body.code,
       discountValue: req.body.discountValue,
       discountType: req.body.discountType,
       startDate: req.body.startDate,
       endDate: req.body.endDate,
     });
+
     return res.status(200).send({
       status: true,
       code: 200,
       message: "تم اضافه الكوبون بنجاح",
-     data:{
-       copon
-     }
+      data: { copon }
     });
 
-  }
-  catch (error) {
-    next(error)
+  } catch (error) {
+    next(error);
   }
 }
+
 const getCopons = async (req, res, next) => {
   try {
     await updateCouponStatus();

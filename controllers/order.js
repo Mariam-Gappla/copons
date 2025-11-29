@@ -7,12 +7,15 @@ const Reel = require("../models/reels")
 const addOrder = async (req, res, next) => {
     try {
         const files = req.files.images || [];
-        console.log(files)
         const userId = req.user.userId;
         const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+
         const imageFiles = files.filter(file => file.mimetype.startsWith('image/'));
         const videoFiles = files.filter(file => file.mimetype.startsWith('video/'));
-        console.log(req.body)
+
+        console.log(req.body);
+
+        // التحقق من عدد الصور والفيديوهات
         if (imageFiles.length > 4) {
             return res.status(400).send({
                 code: 400,
@@ -28,17 +31,20 @@ const addOrder = async (req, res, next) => {
                 message: 'يجب رفع فيديو واحد فقط'
             });
         }
-        const imagesPath = imageFiles.map((file) => {
-            return BASE_URL + `/${Date.now()}-${encodeURIComponent(file.originalname)}`;
-        })
-        const videoPath = videoFiles.map((file) => {
-            return BASE_URL + `/${Date.now()}-${encodeURIComponent(file.originalname)}`;
-        })
-        console.log(imagesPath)
+
+        // حفظ الصور والفيديوهات على السيرفر
+        const savedImages = imageFiles.map(file => saveImage(file));
+        const savedVideo = videoFiles.length ? saveImage(videoFiles[0]) : null;
+
+        // عمل روابط كاملة للمتصفح
+        const imagesPath = savedImages.map(img => `${BASE_URL}/${img}`);
+        const videoPath = savedVideo ? `${BASE_URL}/${savedVideo}` : '';
+
+        // التحقق من صحة البيانات باستخدام orderSchema
         const { error } = orderSchema.validate({
             ...req.body,
             images: imagesPath,
-            video: videoPath[0]
+            video: videoPath
         });
 
         if (error) {
@@ -48,24 +54,24 @@ const addOrder = async (req, res, next) => {
                 message: error.details[0].message
             });
         }
-        const images = files.map((file) => {
-            return saveImage(file);
-        })
-        // احفظ في قاعدة البيانات
+
+        // حفظ الطلب في قاعدة البيانات
         const order = await Order.create({
             ...req.body,
             userId,
             images: imagesPath,
-            video: videoPath[0]
+            video: videoPath
         });
 
+        // حفظ الريل المرتبط بالطلب
         await Reel.create({
             title: req.body.title,
             images: imagesPath,
-            video: videoPath[0],
+            video: videoPath,
             refType: "Order",
-            refId: order._id,
-        })
+            refId: order._id
+        });
+
         res.status(200).send({
             code: 200,
             status: true,
@@ -75,6 +81,7 @@ const addOrder = async (req, res, next) => {
         next(error);
     }
 };
+
 const getOrderById = async (req, res, next) => {
     const id = req.params.id;
     if (!id) {

@@ -8,7 +8,7 @@ const orderSchema = Joi.object({
     'array.min': 'يجب رفع صورة واحدة على الأقل',
     'any.required': 'الصور مطلوبة'
   }),
-  video: Joi.string().uri().messages({
+  video: Joi.string().optional().allow('').uri().messages({
     'string.uri': 'الفيديو يجب أن تكون رابطًا صالحًا'
   }),
   mainCategory: Joi.string().required().messages({
