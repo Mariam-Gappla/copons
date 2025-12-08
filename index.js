@@ -20,6 +20,8 @@ const mainCategoryRoutes=require("./routes/MainCategory");
 const userRoutes=require("./routes/user");
 const reelsRoutes = require("./routes/reels.js");
 const messageRoutes=require("./routes/message.js");
+const notificationRoutes=require("./routes/notification.js");
+const followerRoutes=require("./routes/follower.js");
 const PORT = process.env.PORT || 5000;
 const socket = require("./configration/socket.js");
 // HTTP + Socket Server
@@ -73,6 +75,8 @@ app.use("/user",userRoutes);
 app.use("/mainCategories", mainCategoryRoutes);
 app.use("/reels", reelsRoutes);
 app.use("/messages", messageRoutes);
+app.use("/notification", notificationRoutes);
+app.use("/follower",followerRoutes);
 app.use((err, req, res, next) => {
     res.status(400).send({
         status: false,

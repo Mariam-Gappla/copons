@@ -5,6 +5,8 @@ const getReels = async (req, res, next) => {
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
+        const userId = req.user.userId;
+
         const reels = await Reels.aggregate([
             { $skip: skip },
             { $limit: limit },
@@ -50,14 +52,28 @@ const getReels = async (req, res, next) => {
                 }
             },
 
-            // --------- 3️⃣ حساب العدود ----------  
+            // --------- 3️⃣ حساب العدود + isLiked ----------
             {
                 $addFields: {
                     commentsCount: { $size: "$reelComments" },
                     repliesCount: { $size: "$replies" },
-                    totalComments: { $add: [{ $size: "$reelComments" }, { $size: "$replies" }] },  // ← المهم
+                    totalComments: { $add: [{ $size: "$reelComments" }, { $size: "$replies" }] },
                     likesCount: { $size: "$likes" },
-                    viewsCount: { $size: "$views" }
+                    viewsCount: { $size: "$views" },
+
+                    // --------- ⭐ isLiked ----------
+                    isLiked: {
+                        $cond: [
+                            { $ifNull: [userId, false] },
+                            {
+                                $in: [
+                                    { $toObjectId: userId }, // convert userId → ObjectId
+                                    "$likes"
+                                ]
+                            },
+                            false
+                        ]
+                    }
                 }
             },
 
@@ -68,8 +84,6 @@ const getReels = async (req, res, next) => {
                     replies: 0,
                     likes: 0,
                     views: 0,
-                    commentsCount: 0,
-                    repliesCount: 0
                 }
             }
         ]);
@@ -93,7 +107,6 @@ const getReels = async (req, res, next) => {
         next(error);
     }
 };
-
 const toggleLike = async (req, res,next) => {
     try {
         const { reelId } = req.params;

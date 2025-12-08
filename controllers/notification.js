@@ -26,4 +26,26 @@ const createNotification = async ({ userId, fromUserId, type, targetId, targetTy
 
     return notification;
 };
-module.exports={createNotification}
+const getNotifications = async (req, res, next) => {
+    try {
+        const userId = req.userId;
+
+        const notifications = await Notification
+            .find({ userId })
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            code: 200,
+            success: true,
+            data: notifications
+        });
+
+    } catch (error) {
+        next(error)
+    }
+};
+
+module.exports = {
+    createNotification,
+    getNotifications
+}
